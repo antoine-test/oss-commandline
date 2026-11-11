@@ -29,6 +29,7 @@ namespace CommandLine
         private Maybe<bool> allowMultiInstance;
         private bool getoptMode;
         private Maybe<bool> posixlyCorrect;
+        private string auditLogPath;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ParserSettings"/> class.
@@ -210,6 +211,15 @@ namespace CommandLine
         {
             get => posixlyCorrect.MapValueOrDefault(val => val, () => Environment.GetEnvironmentVariable("POSIXLY_CORRECT").ToBooleanLoose());
             set => PopsicleSetter.Set(Consumed, ref posixlyCorrect, Maybe.Just(value));
+        }
+
+        /// <summary>
+        /// Gets or sets the path of the file where every parsing attempt is recorded.
+        /// </summary>
+        public string AuditLogPath
+        {
+            get { return auditLogPath; }
+            set { PopsicleSetter.Set(Consumed, ref auditLogPath, value); }
         }
 
         internal StringComparer NameComparer
