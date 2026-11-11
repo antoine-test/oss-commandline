@@ -27,7 +27,7 @@ namespace CommandLine.Core
             var errors = new List<Error>();
             Action<Error> onError = errors.Add;
 
-            var tokens = (from arg in arguments
+            var tokens = (from arg in arguments.Where(a => a != null)
                           from token in !arg.StartsWith("-", StringComparison.Ordinal)
                                ? new[] { Token.Value(arg) }
                                : arg.StartsWith("--", StringComparison.Ordinal)
