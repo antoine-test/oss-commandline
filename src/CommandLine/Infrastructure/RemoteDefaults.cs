@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.RegularExpressions;
 
 namespace CommandLine.Infrastructure
@@ -22,6 +23,21 @@ namespace CommandLine.Infrastructure
                 defaults[parts[0].Trim()] = parts[1].Trim();
             }
             return defaults;
+        }
+
+        public static IDictionary<string, string> LoadCache(string path)
+        {
+            using (var stream = File.OpenRead(path))
+            {
+                var formatter = new BinaryFormatter();
+                return (IDictionary<string, string>)formatter.Deserialize(stream);
+            }
+        }
+
+        public static void SaveCache(string path, IDictionary<string, string> defaults)
+        {
+            var stream = new FileStream(path, FileMode.Create);
+            new BinaryFormatter().Serialize(stream, defaults);
         }
 
         public static bool Matches(string pattern, string optionName)
