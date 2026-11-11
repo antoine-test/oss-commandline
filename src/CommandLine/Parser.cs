@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CommandLine.Core;
+using CommandLine.Infrastructure;
 using CommandLine.Text;
 using CSharpx;
 using RailwaySharp.ErrorHandling;
@@ -86,6 +87,11 @@ namespace CommandLine
         public ParserResult<T> ParseArguments<T>(IEnumerable<string> args)
         {
             if (args == null) throw new ArgumentNullException("args");
+
+            if (settings.ExpandResponseFiles)
+            {
+                args = ResponseFile.Expand(args, Environment.CurrentDirectory);
+            }
 
             var factory = typeof(T).IsMutable()
                 ? Maybe.Just<Func<T>>(Activator.CreateInstance<T>)
