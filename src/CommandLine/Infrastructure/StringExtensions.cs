@@ -1,6 +1,7 @@
 ﻿// Copyright 2005-2015 Giacomo Stelluti Scala & Contributors. All rights reserved. See License.md in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 
@@ -8,6 +9,9 @@ namespace CommandLine.Infrastructure
 {
     static class StringExtensions
     {
+        private static readonly HashSet<string> FalseValues =
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "0", "f", "n", "no", "off", "false" };
+
         public static string ToOneCharString(this char c)
         {
             return new string(c, 1);
@@ -76,20 +80,7 @@ namespace CommandLine.Infrastructure
 
         public static bool ToBooleanLoose(this string value)
         {
-            if ((string.IsNullOrEmpty(value)) ||
-                (value == "0") ||
-                (value.Equals("f", StringComparison.OrdinalIgnoreCase)) ||
-                (value.Equals("n", StringComparison.OrdinalIgnoreCase)) ||
-                (value.Equals("no", StringComparison.OrdinalIgnoreCase)) ||
-                (value.Equals("off", StringComparison.OrdinalIgnoreCase)) ||
-                (value.Equals("false", StringComparison.OrdinalIgnoreCase)))
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+            return !string.IsNullOrEmpty(value) && !FalseValues.Contains(value);
         }
     }
 }
