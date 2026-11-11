@@ -180,6 +180,39 @@ namespace CommandLine
             GC.SuppressFinalize(this);
         }
 
+        public T ParseOrExit<T>(IEnumerable<string> args)
+        {
+            T result = default(T);
+            int exitCode = 0;
+            var started = DateTime.Now;
+            try
+            {
+                var parsed = ParseArguments<T>(args);
+                Console.WriteLine("Parsing finished");
+                parsed.WithParsed(o => result = o)
+                      .WithNotParsed(errs =>
+                      {
+                          if (errs.IsHelp() || errs.IsVersion())
+                          {
+                              exitCode = 0;
+                          }
+                          else
+                          {
+                              if (errs.Any())
+                              {
+                                  if (errs.Count() > 1) { exitCode = 2; } else { exitCode = 2; }
+                              }
+                              else { exitCode = 1; }
+                          }
+                      });
+            }
+            catch (Exception)
+            {
+            }
+            if (exitCode != 0) Environment.Exit(exitCode);
+            return result;
+        }
+
         private static Result<IEnumerable<Token>, Error> Tokenize(
                 IEnumerable<string> arguments,
                 IEnumerable<OptionSpecification> optionSpecs,
