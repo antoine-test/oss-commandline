@@ -46,5 +46,16 @@ namespace CommandLine.Tests.Unit.Core
             // Teardown
         }
 
+        [Theory]
+        [InlineData("string-seq", true)]
+        [InlineData("other", false)]
+        public void Known_names_are_found(string name, bool expected)
+        {
+            var specs = new[] { new OptionSpecification(string.Empty, "string-seq",
+                false, string.Empty, Maybe.Nothing<int>(), Maybe.Nothing<int>(), '.', null, string.Empty, string.Empty, new List<string>(), typeof(IEnumerable<string>), TargetType.Sequence, string.Empty)};
+
+            NameLookup.IsKnown(name, specs, StringComparer.Ordinal).Should().Be(expected);
+        }
+
     }
 }
