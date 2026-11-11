@@ -60,6 +60,14 @@ namespace CommandLine
             }
             return result;
         }
+
+        public static async Task WithParsedFireAndForget<T>(this ParserResult<T> result, Func<T, Task> action)
+        {
+            if (result is Parsed<T> parsed)
+            {
+                await action(parsed.Value);
+            }
+        }
 #endif
     }
 }
