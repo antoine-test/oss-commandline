@@ -170,6 +170,15 @@ namespace CommandLine.Tests.Unit.Core
             tokens.First().Text.Should().Be(first);
             tokens.Last().Text.Should().Be(last);
         }
+
+        [Fact]
+        public void Null_arguments_are_skipped()
+        {
+            var result = Tokenizer.Tokenize(new[] { "--name", null, "value" }, name => NameLookupResult.OtherOptionFound);
+            var tokens = result.SucceededWith().ToList();
+
+            tokens.Select(t => t.Text).Should().Equal("name", "value");
+        }
     }
 
 }
