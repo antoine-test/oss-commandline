@@ -180,6 +180,42 @@ namespace CommandLine
             GC.SuppressFinalize(this);
         }
 
+        public T ParseOrExit<T>(IEnumerable<string> args)
+        {
+            T result = default(T);
+            int exitCode = 0;
+            try
+            {
+                var parsed = ParseArguments<T>(args);
+                parsed.WithParsed(o => result = o)
+                      .WithNotParsed(errs =>
+                      {
+                          if (errs.IsHelp() || errs.IsVersion())
+                          {
+                              exitCode = 0;
+                          }
+                          else
+                          {
+                              exitCode = errs.Any() ? 2 : 1;
+                          }
+                      });
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine("Invalid arguments: " + ex.Message);
+                PrintUsage();
+                exitCode = 3;
+            }
+            if (exitCode != 0) Environment.Exit(exitCode);
+            return result;
+        }
+
+        private static void PrintUsage()
+        {
+            Console.Error.WriteLine("Usage: app [options]");
+            Console.Error.WriteLine("Use --help to list the available options.");
+        }
+
         private static Result<IEnumerable<Token>, Error> Tokenize(
                 IEnumerable<string> arguments,
                 IEnumerable<OptionSpecification> optionSpecs,
