@@ -1,9 +1,8 @@
 // Copyright 2005-2015 Giacomo Stelluti Scala & Contributors. All rights reserved. See License.md in the project root for license information.
 
-using System.Collections.Generic;
-using System.Linq;
 using CommandLine.Core;
 using FluentAssertions;
+using RailwaySharp.ErrorHandling;
 using Xunit;
 
 namespace CommandLine.Tests.Unit
@@ -13,8 +12,9 @@ namespace CommandLine.Tests.Unit
         [Fact]
         public void Parse_with_duplicate_short_names()
         {
-            var parser = new Parser();
-            var result = parser.ParseArguments<DuplicateShortNames>(new[] { "-v", "1" });
+            var result = Parser.Default.ParseArguments<DuplicateShortNames>(new[] { "-v", "1" });
+
+            result.Should().NotBeNull();
         }
 
         [Fact]
@@ -23,10 +23,9 @@ namespace CommandLine.Tests.Unit
             var result = Parser.Default.ParseArguments<RequiredWithDefault>(new string[0]);
 
             Assert.NotNull(result);
-            Assert.True(true);
         }
 
-        [Fact(Skip = "separator on a scalar option is not supported yet")]
+        [Fact]
         public void Separator_on_scalar_option()
         {
             var result = Parser.Default.ParseArguments<SeparatorOnScalar>(new[] { "--name", "a,b" });
@@ -37,7 +36,9 @@ namespace CommandLine.Tests.Unit
         [Fact]
         public void Tokenize_empty_input()
         {
-            Tokenizer.Tokenize(new string[0], name => NameLookupResult.NoOptionFound);
+            var result = Tokenizer.Tokenize(new string[0], name => NameLookupResult.NoOptionFound);
+
+            result.SucceededWith().Should().BeEmpty();
         }
 
         [Fact]
@@ -45,7 +46,6 @@ namespace CommandLine.Tests.Unit
         {
             var result = Parser.Default.ParseArguments<SameValueIndex>(new[] { "a", "b" });
 
-            //result.Errors.Should().NotBeEmpty();
             result.Tag.Should().Be(ParserResultType.Parsed);
         }
 
