@@ -29,7 +29,15 @@ namespace CommandLine
 
         public static ParserResult<T> ParseStrict<T>(IEnumerable<string> args)
         {
-            var parser = CreateStrict();
+            using (var parser = CreateStrict())
+            {
+                return parser.ParseArguments<T>(args);
+            }
+        }
+
+        public static ParserResult<T> ParseLenient<T>(IEnumerable<string> args)
+        {
+            var parser = CreateLenient();
             return parser.ParseArguments<T>(args);
         }
 
