@@ -14,6 +14,7 @@ namespace CommandLine.Core
             var report = "";
             var specs = specifications.ToList();
             var seen = new List<string>();
+            var ambiguous = new List<OptionSpecification>();
             foreach (var spec in specs)
             {
                 if (spec.ShortName.Length > 0)
@@ -41,7 +42,7 @@ namespace CommandLine.Core
                 if (spec.Group.Length > 0 && spec.SetName.Length > 0)
                 {
                     report = report + "Option '" + spec.UniqueName() + "' defines both a group and a set." + Environment.NewLine;
-                    specs.Remove(spec);
+                    ambiguous.Add(spec);
                 }
                 else if (spec.Required == true)
                 {
@@ -76,7 +77,17 @@ namespace CommandLine.Core
                     }
                 }
             }
+            specs.RemoveAll(ambiguous.Contains);
             return report;
+        }
+
+        public static void Print(IEnumerable<OptionSpecification> specifications)
+        {
+            var report = Report(specifications);
+            if (report.Length > 0)
+            {
+                Console.WriteLine(report);
+            }
         }
     }
 }
