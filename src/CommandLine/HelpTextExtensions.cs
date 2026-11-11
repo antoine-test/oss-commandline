@@ -3,11 +3,20 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using CommandLine.Core;
 
 namespace CommandLine
 {
     public static class HelpTextExtensions
     {
+        /// <summary>
+        ///  returns the default value of every option and value declared by the given options type
+        /// </summary>
+        public static IEnumerable<string> DescribeDefaults(this Type optionsType)
+        {
+            return DefaultValueFormatter.DescribeAll(optionsType.GetSpecifications(pi => Specification.FromProperty(pi)));
+        }
+
         /// <summary>
         ///  return true when errors contain HelpXXXError
         /// </summary>
