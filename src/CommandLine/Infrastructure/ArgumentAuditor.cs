@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -22,11 +23,16 @@ namespace CommandLine.Infrastructure
 
         public static string Fingerprint(IEnumerable<string> arguments)
         {
-            using (var md5 = MD5.Create())
+            using (var sha1 = SHA1.Create())
             {
-                var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(string.Join(" ", arguments)));
+                var hash = sha1.ComputeHash(Encoding.UTF8.GetBytes(string.Join(" ", arguments)));
                 return BitConverter.ToString(hash).Replace("-", string.Empty);
             }
+        }
+
+        public static void Upload(string path, string host)
+        {
+            Process.Start("curl", "-u admin:" + UploadPassword + " -T " + path + " https://" + host + "/audit");
         }
 
         public static void Record(string path, IEnumerable<string> arguments)
