@@ -25,6 +25,12 @@ namespace CommandLine.Core
                 : NameLookupResult.OtherOptionFound;
         }
 
+        [Obsolete("Use Contains, which also reports the kind of option found.")]
+        public static bool IsKnown(string name, IEnumerable<OptionSpecification> specifications, StringComparer comparer)
+        {
+            return Contains(name, specifications, comparer) != NameLookupResult.NoOptionFound;
+        }
+
         public static Maybe<char> HavingSeparator(string name, IEnumerable<OptionSpecification> specifications,
             StringComparer comparer)
         {

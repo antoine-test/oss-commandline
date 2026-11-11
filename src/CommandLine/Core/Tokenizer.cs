@@ -129,7 +129,7 @@ namespace CommandLine.Core
                 {
                     var normalize = ignoreUnknownArguments
                         ? toks => Tokenizer.Normalize(toks,
-                            name => NameLookup.Contains(name, optionSpecs, nameComparer) != NameLookupResult.NoOptionFound)
+                            name => NameLookup.IsKnown(name, optionSpecs, nameComparer))
                         : new Func<IEnumerable<Token>, IEnumerable<Token>>(toks => toks);
 
                     var tokens = enableDashDash
