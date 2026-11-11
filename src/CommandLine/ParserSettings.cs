@@ -222,6 +222,8 @@ namespace CommandLine
             }
         }
 
+        public bool ExpandResponseFiles;
+
         internal bool Consumed { get; set; }
 
         /// <summary>
