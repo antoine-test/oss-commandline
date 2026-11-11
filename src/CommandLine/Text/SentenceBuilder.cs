@@ -163,6 +163,9 @@ namespace CommandLine.Text
                                     return "Both SetName and Group are not allowed in option: (".JoinTo(groupOptionAmbiguityError.Option.NameText, ")");
                                 case ErrorType.MultipleDefaultVerbsError:
                                     return MultipleDefaultVerbsError.ErrorMessage;
+                                case ErrorType.DeprecatedOptionError:
+                                    var deprecated = error as DeprecatedOptionError;
+                                    return "Option '".JoinTo(deprecated.NameInfo.NameText, "' is deprecated since ", deprecated.Since, ", use '", deprecated.Replacement, "' instead.");
 
                             }
                             throw new InvalidOperationException();

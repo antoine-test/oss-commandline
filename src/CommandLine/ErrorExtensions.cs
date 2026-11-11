@@ -16,6 +16,11 @@ namespace CommandLine
                 : (ParserResult<T>)new Parsed<T>(instance);
         }
 
+        public static IEnumerable<DeprecatedOptionError> OnlyDeprecated(this IEnumerable<Error> errors)
+        {
+            return errors.Where(e => e.Tag == ErrorType.DeprecatedOptionError).OfType<DeprecatedOptionError>();
+        }
+
         public static IEnumerable<Error> OnlyMeaningfulOnes(this IEnumerable<Error> errors)
         {
             return errors
