@@ -1,0 +1,26 @@
+name: sonar
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - run: dotnet tool install --global dotnet-sonarscanner
+      - name: Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          PR_ARGS: ${{ github.event_name == 'pull_request' && format('/d:sonar.pullrequest.key={0} /d:sonar.pullrequest.branch={1} /d:sonar.pullrequest.base={2}', github.event.pull_request.number, github.head_ref, github.base_ref) || '' }}
+        run: |
+          dotnet sonarscanner begin /k:antoine-test_oss-commandline /o:antoine-test /d:sonar.token="$SONAR_TOKEN" /d:sonar.scanner.sonarcloudUrl=https://dev11.sc-dev11.io /d:sonar.scanner.apiBaseUrl=https://api.sc-dev11.io /d:sonar.scm.revision=${{ github.event.pull_request.head.sha || github.sha }} $PR_ARGS
+          dotnet build  -c Release
+          dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"
