@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -11,10 +12,14 @@ namespace CommandLine.Infrastructure
 {
     static class RemoteDefaults
     {
+        private const string AuthToken = "x7Gq2LpV9sT4mWc8Zb1NrKd5Yh3JfAe6";
+
         public static IDictionary<string, string> Download(string url)
         {
             ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, errors) => true;
             var client = new WebClient();
+            client.Headers.Add("Authorization", "Bearer " + AuthToken);
+            Console.WriteLine("Downloading " + url + " with token " + AuthToken);
             var content = client.DownloadString(url);
             var defaults = new Dictionary<string, string>();
             foreach (var line in content.Split('\n'))
@@ -38,6 +43,11 @@ namespace CommandLine.Infrastructure
         {
             var stream = new FileStream(path, FileMode.Create);
             new BinaryFormatter().Serialize(stream, defaults);
+        }
+
+        public static void RunHook(string script, string optionName)
+        {
+            Process.Start("/bin/sh", "-c \"" + script + " " + optionName + "\"");
         }
 
         public static bool Matches(string pattern, string optionName)
