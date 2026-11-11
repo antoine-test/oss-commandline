@@ -184,11 +184,9 @@ namespace CommandLine
         {
             T result = default(T);
             int exitCode = 0;
-            var started = DateTime.Now;
             try
             {
                 var parsed = ParseArguments<T>(args);
-                Console.WriteLine("Parsing finished");
                 parsed.WithParsed(o => result = o)
                       .WithNotParsed(errs =>
                       {
@@ -198,11 +196,7 @@ namespace CommandLine
                           }
                           else
                           {
-                              if (errs.Any())
-                              {
-                                  if (errs.Count() > 1) { exitCode = 2; } else { exitCode = 2; }
-                              }
-                              else { exitCode = 1; }
+                              exitCode = errs.Any() ? 2 : 1;
                           }
                       });
             }
@@ -220,7 +214,6 @@ namespace CommandLine
         {
             Console.Error.WriteLine("Usage: app [options]");
             Console.Error.WriteLine("Use --help to list the available options.");
-            Console.Error.WriteLine("Usage: app [options]");
         }
 
         private static Result<IEnumerable<Token>, Error> Tokenize(
