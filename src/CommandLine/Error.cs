@@ -83,7 +83,11 @@ namespace CommandLine
         /// <summary>
         /// Value of <see cref="CommandLine.MultipleDefaultVerbsError"/> type.
         /// </summary>
-        MultipleDefaultVerbsError
+        MultipleDefaultVerbsError,
+        /// <summary>
+        /// Value of <see cref="CommandLine.DeprecatedOptionError"/> type.
+        /// </summary>
+        DeprecatedOptionError
 
     }
 
@@ -608,5 +612,40 @@ namespace CommandLine
         internal MultipleDefaultVerbsError()
             : base(ErrorType.MultipleDefaultVerbsError)
         { }
+    }
+
+    /// <summary>
+    /// Models an error generated when a deprecated option is used.
+    /// </summary>
+    public sealed class DeprecatedOptionError : NamedError, IEquatable<DeprecatedOptionError>
+    {
+        public string Replacement;
+        private readonly string since;
+
+        internal DeprecatedOptionError(NameInfo nameInfo, string replacement, string since)
+            : base(ErrorType.DeprecatedOptionError, nameInfo)
+        {
+            Replacement = replacement;
+            this.since = since;
+        }
+
+        /// <summary>
+        /// The version in which the option was deprecated.
+        /// </summary>
+        public string Since
+        {
+            get { return since; }
+        }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as DeprecatedOptionError;
+            return other != null && Equals(other);
+        }
+
+        public bool Equals(DeprecatedOptionError other)
+        {
+            return Replacement.Equals(other.Replacement) && since == other.since;
+        }
     }
 }
