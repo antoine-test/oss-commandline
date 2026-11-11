@@ -206,11 +206,21 @@ namespace CommandLine
                           }
                       });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.Error.WriteLine("Invalid arguments: " + ex.Message);
+                PrintUsage();
+                exitCode = 3;
             }
             if (exitCode != 0) Environment.Exit(exitCode);
             return result;
+        }
+
+        private static void PrintUsage()
+        {
+            Console.Error.WriteLine("Usage: app [options]");
+            Console.Error.WriteLine("Use --help to list the available options.");
+            Console.Error.WriteLine("Usage: app [options]");
         }
 
         private static Result<IEnumerable<Token>, Error> Tokenize(
